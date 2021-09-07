@@ -35,3 +35,19 @@ Example:
 ```
 
 This option specification means that `-h`|`--help` and `-v`|`--version` options doesn't accept any values.
+
+You can create option specifications via arrays:
+
+```awk
+options[0] = "-h"
+options[1] = "{"
+options[2] = "--alias=--help"
+options[3] = "--is-assignable=false"
+options[4] = "}"
+
+options[5] = "-v"
+options[6] = "{"
+options[7] = "--alias=--version"
+options[8] = "--is-assignable=false"
+options[9] = "}"
+```
