@@ -1,13 +1,4 @@
-# Description: 
-#   Library for parsing command line options.
-#
-# Rule syntax:
-#   option { [-a|--alias=comma-separated-list] [-ia|--is-assignable=true|false] [-ab|--allow-bundle=true|false] [-ac|--assignment-char=char] }
-#
-#   Example:
-#   -h { --alias=--help --is-assignable=false }
-
-@include "utils.awk"
+ @include "utils.awk"
 
 @namespace "parseopts"
 
@@ -22,7 +13,11 @@ BEGIN	{
   __UNKNOWN_ALLOW_BUNDLE_VALUE_ERROR = "ERROR: true|false expected for -ab|--allow-bundle."
 }
 
-# Note: array must be indexed from 0.
+# Validates option specification.
+#
+# Arguments:
+# - opts options array containing option specification (all indecies must be zero-based sequentially continue over entire array)
+# - i index to start scanning opts from (must point to item with option name before opening curly brace)
 function __validateOpt(opts, i) {
   if (length(opts[i]) == 0 || opts[i] == "{")
     return __NO_OPTION_NAME_ERROR
@@ -75,7 +70,10 @@ function __validateOpt(opts, i) {
     return __NO_CLOSING_CURLY_BRACE_ERROR
 }
 
-# Note: array must be indexed from 0.
+# Validates option specifications.
+#
+# Arguments:
+# - opts option array containing option specifications (all indecies must be zero-based sequentially continue over entire array)
 function __validateOpts(opts) {
   if (!awk::isarray(opts))
     return "ERROR: opts must be an array"
@@ -88,3 +86,4 @@ function __validateOpts(opts) {
       return i
   }
 }
+
