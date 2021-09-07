@@ -15,7 +15,11 @@ BEGIN	{
   __NO_OPTION_NAME_ERROR = "ERROR: option name expected before {."
   __NO_OPENING_CURLY_BRACE_ERROR = "ERROR: { expected after option name."
   __NO_CLOSING_CURLY_BRACE_ERROR = "ERROR: } expected after option description."
-  __UNKNOWN_OPTION = "ERROR: -a|--alias, -ia|--is-assignable, -ab|--allow-bundle, -ac|--assignment-char expected."
+  __UNKNOWN_OPTION_ERROR = "ERROR: -a|--alias, -ia|--is-assignable, -ab|--allow-bundle, -ac|--assignment-char expected."
+
+  __NO_ALIAS_VALUE_ERROR = "ERROR: alias expected after assignment for -a|--alias."
+  __UNKNOWN_ASSIGNABLE_VALUE_ERROR = "ERROR: true|false expected for -ia|--is-assignable."
+  __UNKNOWN_ALLOW_BUNDLE_VALUE_ERROR = "ERROR: true|false expected for -ab|--allow-bundle."
 }
 
 # Note: array must be indexed from 0.
@@ -29,20 +33,40 @@ function __validateOpt(opts, i) {
   
   i++
   while (i < length(opts)) {
-    switch (opts[i]) {
+    option = opts[i]
+    value = opts[i]
+    
+    sub(/=.*/, "", option)
+    sub(/^.*=/, "", value)
+
+    print option " => " value
+    switch (option) {
       case /^-a|--alias=/:
+        if (value == "")
+          return __NO_ALIAS_VALUE_ERROR
+        break
+      
       case /^-ia|--is-assignable=/:
+        if (value !~ /^true|false$/)
+          return __UNKNOWN_ASSIGNABLE_VALUE_ERROR
+        break
+      
       case /^-ab|--allow-bundle=/:
+        if (value !~ /^true|false$/)
+          return __UNKNOWN_ALLOW_BUNDLE_VALUE_ERROR
+        break
+
       case /^--ac|--assignment-char=/:
-        i++
         break
       
       case "}":
         return ++i
 
       default:
-        return __UNKNOWN_OPTION
+        return __UNKNOWN_OPTION_ERROR
     }
+
+    i++
   }
 
   len = length(opts)
