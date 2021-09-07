@@ -34,7 +34,6 @@ function __validateOpt(opts, i) {
     sub(/=.*/, "", option)
     sub(/^.*=/, "", value)
 
-    print option " => " value
     switch (option) {
       case /^-a|--alias=/:
         if (value == "")
@@ -65,7 +64,6 @@ function __validateOpt(opts, i) {
   }
 
   len = length(opts)
-  print opts[len - 1]
   if (i = len && opts[len - 1] != "}")
     return __NO_CLOSING_CURLY_BRACE_ERROR
 }
