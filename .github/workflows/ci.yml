@@ -15,8 +15,9 @@ jobs:
         run: |
           declare -ir ERRORS_FOUND=1
 
-          output="$(awk --lint=no-ext -f parseopts.awk)"
+          output="$(awk --lint=no-ext -f parseopts.awk 2>&1)"
           echo "$output"
+
           if [[ -n $output ]]; then
             exit $ERRORS_FOUND
           fi
