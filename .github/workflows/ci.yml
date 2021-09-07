@@ -21,3 +21,15 @@ jobs:
           if [[ -n $output ]]; then
             exit $ERRORS_FOUND
           fi
+  
+  check-markdown:
+    name: Check .md files
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Lint .md files
+        run: |
+          npm install -g markdownlint-cli
+          markdownlint *.md
