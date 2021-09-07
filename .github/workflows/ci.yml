@@ -13,4 +13,10 @@ jobs:
 
       - name: Lint .awk files
         run: |
-          awk --lint=no-ext -f parseopts.awk
+          declare -ir ERRORS_FOUND=1
+
+          output="$(awk --lint=no-ext -f parseopts.awk)"
+          echo "$output"
+          if [[ -n $output ]]; then
+            exit $ERRORS_FOUND
+          fi
