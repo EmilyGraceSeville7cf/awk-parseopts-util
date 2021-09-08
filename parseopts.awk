@@ -24,6 +24,14 @@ BEGIN	{
   __MISSING_ASSIGNMENT_CHAR_WHEN_ALLOW_BUNDLE_ERROR = "ERROR: expected -ac|--assignment-char to be specified when -ia|--is-assignable and -ab|--allow-bundle equal to true."
 }
 
+# Converts bool string to integer.
+#
+# Arguments:
+# - value - value
+function __toInteger(value) {
+  return (value == "true") ? utils::true() : utils::false()
+}
+
 # Validates option specification.
 #
 # Arguments:
@@ -54,8 +62,10 @@ function __validateOpt(opts, i) {
     sub(/=.*/, "", option)
     sub(/^.*=/, "", value)
 
+    option = option "="
+
     switch (option) {
-      case /^(-t|--type)/:
+      case /^(-t|--type)=/:
         if (typeDefined == utils::true())
           return __DUPLICATED_TYPE_ERROR
 
@@ -65,7 +75,7 @@ function __validateOpt(opts, i) {
         typeDefined = utils::true()
         break
       
-      case /^(-a|--alias)/:
+      case /^(-a|--alias)=/:
         if (aliasDefined == utils::true())
           return __DUPLICATED_ALIAS_ERROR
 
@@ -75,7 +85,7 @@ function __validateOpt(opts, i) {
         aliasDefined = utils::true()
         break
       
-      case /^(-ia|--is-assignable)/:
+      case /^(-ia|--is-assignable)=/:
         if (isAssignableDefined == utils::true())
           return __DUPLICATED_IS_ASSIGNABLE_ERROR
         
@@ -83,10 +93,10 @@ function __validateOpt(opts, i) {
           return __UNKNOWN_ASSIGNABLE_VALUE_ERROR
 
         isAssignableDefined = utils::true()
-        isAssignableEqualTrue = (value == "true") ? utils::true() : utils::false()
+        isAssignableEqualTrue = __toInteger(value)
         break
       
-      case /^(-ab|--allow-bundle)/:
+      case /^(-ab|--allow-bundle)=/:
         if (allowBundleDefined == utils::true())
           return __DUPLICATED_ALLOW_BUNDLE_ERROR
         
@@ -94,22 +104,22 @@ function __validateOpt(opts, i) {
           return __UNKNOWN_ALLOW_BUNDLE_VALUE_ERROR
         
         allowBundleDefined = utils::true()
-        allowBundleEqualTrue = (value == "true") ? utils::true() : utils::false()
+        allowBundleEqualTrue = __toInteger(value)
         break
 
-      case /^(--ac|--assignment-char)/:
+      case /^(--ac|--assignment-char)=/:
         if (assignmentCharDefined == utils::true())
           return __DUPLICATED_ASSIGNMENT_CHAR_ERROR
         
         assignmentCharDefined = utils::true()
         break
       
-      case "}":
+      case "}=":
         if (isAssignableEqualTrue == utils::true() && typeDefined == utils::false())
           return __MISSING_TYPE_WHEN_IS_ASSIGNABLE_ERROR
         if (isAssignableEqualTrue == utils::true() && allowBundleDefined == utils::false())
           return __MISSING_ALLOW_BUNDLE_WHEN_IS_ASSIGNABLE_ERROR
-        if (isAssignableEqualTrue == utils::true() && allowBundleDefined == utils::true() &&
+        if (isAssignableEqualTrue == utils::true() && allowBundleEqualTrue == utils::true() &&
           assignmentCharDefined == utils::false())
           return __MISSING_ASSIGNMENT_CHAR_WHEN_ALLOW_BUNDLE_ERROR
 
