@@ -1,9 +1,6 @@
-@namespace "utils"
+@include "errors.awk"
 
-BEGIN	{
-  __ARRAY_EXPECTED = "ERROR: array expected. Wrong argument: "
-  __PRIMITIVE_EXPECTED = "ERROR: primitive expected. Wrong argument: "
-}
+@namespace "utils"
 
 # Returns true value.
 function true() {
@@ -22,7 +19,7 @@ function false() {
 # - separator - separator [default value: ", "]
 function printArray(target, separator) {
   if (!awk::isarray(target))
-    return __ARRAY_EXPECTED "target"
+    return errors::__ARRAY_EXPECTED "target"
   if (length(separator) == 0)
     separator = ", "
   
@@ -54,7 +51,7 @@ function printlnArray(target, separator) {
 # - taget - array
 function clearArray(target) {
   if (!awk::isarray(target))
-    return __ARRAY_EXPECTED "target"
+    return errors::__ARRAY_EXPECTED "target"
   
   for (key in target)
     delete target[key]
@@ -67,7 +64,7 @@ function clearArray(target) {
 # - value - value to look for
 function containsValue(target, value) {
   if (!awk::isarray(target))
-    return __ARRAY_EXPECTED "target"
+    return errors::__ARRAY_EXPECTED "target"
   
   for (key in target)
     if (target[key] == value)
@@ -81,7 +78,7 @@ function containsValue(target, value) {
 # - value - value to check
 function isPositiveInteger(value) {
   if (awk::isarray(value))
-    return __PRIMITIVE_EXPECTED "value"
+    return errors::__PRIMITIVE_EXPECTED "value"
   
   return value ~ /^+?[[:digit:]]+$/
 }
@@ -92,7 +89,7 @@ function isPositiveInteger(value) {
 # - value - value to check
 function isNegativeInteger(value) {
   if (awk::isarray(value))
-    return __PRIMITIVE_EXPECTED "value"
+    return errors::__PRIMITIVE_EXPECTED "value"
   
   return value ~ /^-?[[:digit:]]+$/
 }
@@ -103,7 +100,7 @@ function isNegativeInteger(value) {
 # - value - value to check
 function isInteger(value) {
   if (awk::isarray(value))
-    return __PRIMITIVE_EXPECTED "value"
+    return errors::__PRIMITIVE_EXPECTED "value"
   
   return value ~ /^[-+]?[[:digit:]]+$/
 }
@@ -114,7 +111,7 @@ function isInteger(value) {
 # - value - value to check
 function isPositiveFloat(value) {
   if (awk::isarray(value))
-    return __PRIMITIVE_EXPECTED "value"
+    return errors::__PRIMITIVE_EXPECTED "value"
   
   return value ~ /^+?[[:digit:]]+\.[[:digit:]]*$/
 }
@@ -125,7 +122,7 @@ function isPositiveFloat(value) {
 # - value - value to check
 function isNegativeFloat(value) {
   if (awk::isarray(value))
-    return __PRIMITIVE_EXPECTED "value"
+    return errors::__PRIMITIVE_EXPECTED "value"
   
   return value ~ /^-?[[:digit:]]+\.[[:digit:]]*$/
 }
@@ -136,7 +133,7 @@ function isNegativeFloat(value) {
 # - value - value to check
 function isFloat(value) {
   if (awk::isarray(value))
-    return __PRIMITIVE_EXPECTED "value"
+    return errors::__PRIMITIVE_EXPECTED "value"
   
   return value ~ /^[-+]?[[:digit:]]+\.[[:digit:]]*$/
 }
@@ -147,7 +144,7 @@ function isFloat(value) {
 # - value - value to check
 function isBool(value) {
   if (awk::isarray(value))
-    return __PRIMITIVE_EXPECTED "value"
+    return errors::__PRIMITIVE_EXPECTED "value"
   
   return value ~ /^true|false$/
 }
