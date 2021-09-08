@@ -35,8 +35,8 @@ function __toInteger(value) {
 # Validates option specification.
 #
 # Arguments:
-# - opts options array containing option specification (all indecies must be zero-based sequentially continue over entire array)
-# - i index to start scanning opts from (must point to item with option name before opening curly brace)
+# - opts - options array containing option specification (all indecies must be zero-based sequentially continue over entire array)
+# - i - index to start scanning opts from (must point to item with option name before opening curly brace)
 function __validateOpt(opts, i) {
   if (length(opts[i]) == 0 || opts[i] == "{")
     return __NO_OPTION_NAME_ERROR
@@ -140,7 +140,7 @@ function __validateOpt(opts, i) {
 # Validates option specifications.
 #
 # Arguments:
-# - opts option array containing option specifications (all indecies must be zero-based sequentially continue over entire array)
+# - opts - option array containing option specifications (all indecies must be zero-based sequentially continue over entire array)
 function __validateOpts(opts) {
   if (!awk::isarray(opts))
     return "ERROR: opts must be an array"
@@ -154,3 +154,85 @@ function __validateOpts(opts) {
   }
 }
 
+# Saves option specification as several associative arrays.
+#
+# Arguments:
+# - opts options array containing option specification (all indecies must be zero-based sequentially continue over entire array)
+# - i - index to start scanning opts from (must point to item with option name before opening curly brace)
+# - outType - array with -t|--type values
+# - outAlias - array with -a|--alias values
+# - outIsAssignable - array with -ia|--is-assignable values
+# - outAllowBundle - array with -ab|--allow-bundle values
+# - outAssignmentChar - array with -ac|--assignment-char values
+function __parseOpt(opts, i, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar) {
+  if (!awk::isarray(opts))
+    return "ERROR: opts must be an array"
+  
+  optionName = opts[i++]
+  i++
+
+  while (i < length(opts) && opts[i] != "}") {
+    option = opts[i]
+    value = opts[i]
+
+    sub(/=.*/, "", option)
+    sub(/^.*=/, "", value)
+
+    optionWithEqualSign = option "="
+
+    switch (optionWithEqualSign) {
+      case /^(-t|--type)=/:
+        outType[optionName] = value
+        break
+      
+      case /^(-a|--alias)=/:
+        outAlias[optionName] = value
+        break
+      
+      case /^(-ia|--is-assignable)=/:
+        outIsAssignable[optionName] = value
+        break
+      
+      case /^(-ab|--allow-bundle)=/:
+        outAllowBundle[optionName] = value
+        break
+
+      case /^(--ac|--assignment-char)=/:
+        outAssignmentChar[optionName] = value
+        break
+    }
+
+    i++
+  }
+
+  return i
+}
+
+# Saves option specification as several associative arrays.
+#
+# Arguments:
+# - opts options array containing option specifications (all indecies must be zero-based sequentially continue over entire array)
+# - i - index to start scanning opts from (must point to item with option name before opening curly brace)
+# - outType - array with -t|--type values
+# - outAlias - array with -a|--alias values
+# - outIsAssignable - array with -ia|--is-assignable values
+# - outAllowBundle - array with -ab|--allow-bundle values
+# - outAssignmentChar - array with -ac|--assignment-char values
+function __parseOpts(opts, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar) {
+  if (!awk::isarray(opts))
+    return "ERROR: opts must be an array"
+  
+  utils::clearArray(outType)
+  utils::clearArray(outAlias)
+  utils::clearArray(outIsAssignable)
+  utils::clearArray(outAllowBundle)
+  utils::clearArray(outAssignmentChar)
+
+  i = 0
+  while (i < length(opts)) {
+    i = __parseOpt(opts, i, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar)
+
+    if (i ~ /^ERROR:/) # If error text returned instead of index than throw error.
+      return i
+  }
+}
