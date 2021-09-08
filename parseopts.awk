@@ -3,21 +3,21 @@
 @namespace "parseopts"
 
 BEGIN	{
-  __NO_OPTION_NAME_ERROR = "ERROR: option name expected before {."
-  __NO_OPENING_CURLY_BRACE_ERROR = "ERROR: { expected after option name."
-  __NO_CLOSING_CURLY_BRACE_ERROR = "ERROR: } expected after option description."
-  __UNKNOWN_OPTION_ERROR = "ERROR: -t|--type, -a|--alias, -ia|--is-assignable, -ab|--allow-bundle, -ac|--assignment-char expected."
+  __NO_OPTION_NAME_ERROR = "ERROR: option name expected before {. Wrong value is: "
+  __NO_OPENING_CURLY_BRACE_ERROR = "ERROR: { expected after option name. Wrong value is: "
+  __NO_CLOSING_CURLY_BRACE_ERROR = "ERROR: } expected after option description. Wrong value is: "
+  __UNKNOWN_OPTION_ERROR = "ERROR: -t|--type, -a|--alias, -ia|--is-assignable, -ab|--allow-bundle, -ac|--assignment-char expected. Wrong value is: "
 
-  __DUPLICATED_TYPE_ERROR = "ERROR: -t|--type duplicated."
-  __DUPLICATED_ALIAS_ERROR = "ERROR: -a|--alias duplicated."
-  __DUPLICATED_IS_ASSIGNABLE_ERROR = "ERROR: -ia|--is-assignable duplicated."
-  __DUPLICATED_ALLOW_BUNDLE_ERROR = "ERROR: -ab|--allow-bundle duplicated."
-  __DUPLICATED_ASSIGNMENT_CHAR_ERROR = "ERROR: -ac|--assignment-char duplicated."
+  __DUPLICATED_TYPE_ERROR = "ERROR: -t|--type duplicated. Wrong value is: "
+  __DUPLICATED_ALIAS_ERROR = "ERROR: -a|--alias duplicated. Wrong value is: "
+  __DUPLICATED_IS_ASSIGNABLE_ERROR = "ERROR: -ia|--is-assignable duplicated. Wrong value is: "
+  __DUPLICATED_ALLOW_BUNDLE_ERROR = "ERROR: -ab|--allow-bundle duplicated. Wrong value is: "
+  __DUPLICATED_ASSIGNMENT_CHAR_ERROR = "ERROR: -ac|--assignment-char duplicated. Wrong value is: "
 
-  __UNKNOWN_TYPE_VALUE_ERROR = "ERROR: integer|float|bool|string expected for -t|--type."
-  __NO_ALIAS_VALUE_ERROR = "ERROR: alias expected after assignment for -a|--alias."
-  __UNKNOWN_ASSIGNABLE_VALUE_ERROR = "ERROR: true|false expected for -ia|--is-assignable."
-  __UNKNOWN_ALLOW_BUNDLE_VALUE_ERROR = "ERROR: true|false expected for -ab|--allow-bundle."
+  __UNKNOWN_TYPE_VALUE_ERROR = "ERROR: integer|float|bool|string expected for -t|--type. Wrong value is: "
+  __NO_ALIAS_VALUE_ERROR = "ERROR: alias expected after assignment for -a|--alias. Wrong value is: "
+  __UNKNOWN_ASSIGNABLE_VALUE_ERROR = "ERROR: true|false expected for -ia|--is-assignable. Wrong value is: "
+  __UNKNOWN_ALLOW_BUNDLE_VALUE_ERROR = "ERROR: true|false expected for -ab|--allow-bundle. Wrong value is: "
 
   __MISSING_TYPE_WHEN_IS_ASSIGNABLE_ERROR = "ERROR: expected -t|--type to be specified when -ia|--is-assignable equals to true."
   __MISSING_ALLOW_BUNDLE_WHEN_IS_ASSIGNABLE_ERROR = "ERROR: expected -ab|--allow-bundle to be specified when -ia|--is-assignable equals to true."
@@ -67,30 +67,30 @@ function __validateOpt(opts, i) {
     switch (option) {
       case /^(-t|--type)=/:
         if (typeDefined == utils::true())
-          return __DUPLICATED_TYPE_ERROR
+          return __DUPLICATED_TYPE_ERROR option
 
         if (value !~ /^integer|float|bool|string$/)
-          return __UNKNOWN_TYPE_VALUE_ERROR
+          return __UNKNOWN_TYPE_VALUE_ERROR option
 
         typeDefined = utils::true()
         break
       
       case /^(-a|--alias)=/:
         if (aliasDefined == utils::true())
-          return __DUPLICATED_ALIAS_ERROR
+          return __DUPLICATED_ALIAS_ERROR option
 
         if (value == "")
-          return __NO_ALIAS_VALUE_ERROR
+          return __NO_ALIAS_VALUE_ERROR option
 
         aliasDefined = utils::true()
         break
       
       case /^(-ia|--is-assignable)=/:
         if (isAssignableDefined == utils::true())
-          return __DUPLICATED_IS_ASSIGNABLE_ERROR
+          return __DUPLICATED_IS_ASSIGNABLE_ERROR option
         
         if (value !~ /^true|false$/)
-          return __UNKNOWN_ASSIGNABLE_VALUE_ERROR
+          return __UNKNOWN_ASSIGNABLE_VALUE_ERROR option
 
         isAssignableDefined = utils::true()
         isAssignableEqualTrue = __toInteger(value)
@@ -98,10 +98,10 @@ function __validateOpt(opts, i) {
       
       case /^(-ab|--allow-bundle)=/:
         if (allowBundleDefined == utils::true())
-          return __DUPLICATED_ALLOW_BUNDLE_ERROR
+          return __DUPLICATED_ALLOW_BUNDLE_ERROR option
         
         if (value !~ /^true|false$/)
-          return __UNKNOWN_ALLOW_BUNDLE_VALUE_ERROR
+          return __UNKNOWN_ALLOW_BUNDLE_VALUE_ERROR option
         
         allowBundleDefined = utils::true()
         allowBundleEqualTrue = __toInteger(value)
@@ -109,7 +109,7 @@ function __validateOpt(opts, i) {
 
       case /^(--ac|--assignment-char)=/:
         if (assignmentCharDefined == utils::true())
-          return __DUPLICATED_ASSIGNMENT_CHAR_ERROR
+          return __DUPLICATED_ASSIGNMENT_CHAR_ERROR option
         
         assignmentCharDefined = utils::true()
         break
@@ -126,7 +126,7 @@ function __validateOpt(opts, i) {
         return ++i
 
       default:
-        return __UNKNOWN_OPTION_ERROR
+        return __UNKNOWN_OPTION_ERROR option
     }
 
     i++
