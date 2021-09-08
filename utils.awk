@@ -33,6 +33,15 @@ function printlnArray(target, separator) {
   print
 }
 
+# Cleares array.
+#
+# Arguments:
+# - taget - array
+function clearArray(target) {
+  for (key in target)
+    delete target[key]
+}
+
 # Checks whether value is a positive integer.
 #
 # Arguments:
@@ -87,4 +96,14 @@ function isFloat(value) {
 # - value - value to check
 function isBool(value) {
   return value ~ /^true|false$/
+}
+
+# Returns true value.
+function true() {
+  return 1
+}
+
+# Returns false value.
+function false() {
+  return 0
 }
