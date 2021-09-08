@@ -1,4 +1,4 @@
- @include "utils.awk"
+@include "utils.awk"
 
 @namespace "parseopts"
 
@@ -6,11 +6,14 @@ BEGIN	{
   __NO_OPTION_NAME_ERROR = "ERROR: option name expected before {."
   __NO_OPENING_CURLY_BRACE_ERROR = "ERROR: { expected after option name."
   __NO_CLOSING_CURLY_BRACE_ERROR = "ERROR: } expected after option description."
-  __UNKNOWN_OPTION_ERROR = "ERROR: -a|--alias, -ia|--is-assignable, -ab|--allow-bundle, -ac|--assignment-char expected."
+  __UNKNOWN_OPTION_ERROR = "ERROR: -t|--type, -a|--alias, -ia|--is-assignable, -ab|--allow-bundle, -ac|--assignment-char expected."
 
+  __UNKNOWN_TYPE_VALUE_ERROR = "ERROR: integer|float|bool|string expected for -t|--type."
   __NO_ALIAS_VALUE_ERROR = "ERROR: alias expected after assignment for -a|--alias."
   __UNKNOWN_ASSIGNABLE_VALUE_ERROR = "ERROR: true|false expected for -ia|--is-assignable."
   __UNKNOWN_ALLOW_BUNDLE_VALUE_ERROR = "ERROR: true|false expected for -ab|--allow-bundle."
+
+  __MISSING_TYPE_VALUE_ERROR = "ERROR: expected -t|--type to be specified."
 }
 
 # Validates option specification.
@@ -26,6 +29,8 @@ function __validateOpt(opts, i) {
   if (opts[i] != "{")
     return __NO_OPENING_CURLY_BRACE_ERROR
   
+  typeSpecified = utils::false()
+
   i++
   while (i < length(opts)) {
     option = opts[i]
@@ -35,25 +40,35 @@ function __validateOpt(opts, i) {
     sub(/^.*=/, "", value)
 
     switch (option) {
-      case /^-a|--alias=/:
+      case /^(-t|--type)/:
+        if (value !~ /^integer|float|bool|string$/)
+          return __UNKNOWN_TYPE_VALUE_ERROR
+
+        typeSpecified = utils::true()
+        break
+      
+      case /^(-a|--alias)/:
         if (value == "")
           return __NO_ALIAS_VALUE_ERROR
         break
       
-      case /^-ia|--is-assignable=/:
+      case /^(-ia|--is-assignable)/:
         if (value !~ /^true|false$/)
           return __UNKNOWN_ASSIGNABLE_VALUE_ERROR
         break
       
-      case /^-ab|--allow-bundle=/:
+      case /^(-ab|--allow-bundle)/:
         if (value !~ /^true|false$/)
           return __UNKNOWN_ALLOW_BUNDLE_VALUE_ERROR
         break
 
-      case /^--ac|--assignment-char=/:
+      case /^(--ac|--assignment-char)/:
         break
       
       case "}":
+        if (typeSpecified == utils::false())
+          return __MISSING_TYPE_VALUE_ERROR
+        
         return ++i
 
       default:
