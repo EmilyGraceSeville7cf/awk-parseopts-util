@@ -26,8 +26,8 @@ where:
   - `-t`|`--type` - `option` value type one of `integer`|`float`|`bool`|`string` (required when `-ia`|`--is-assignable` equals to `true`)
   - `-a`|`--alias` - `option` aliases
   - `-ia`|`--is-assignable` - specifies whether `option` accepts value
-  - `-ab`|`--allow-bundle` - specifies whether `option` acceptable value can be assigned via delimiting `option` and it via `-ac`|`--assignment-char` (allowed when `-ia`|`--is-assignable` equals to `true`)
-  - `-ac`|`--assignment-char` - assignment char used to specify `option` value  (allowed when `-ia`|`--is-assignable` equals to `true`)
+  - `-ab`|`--allow-bundle` - specifies whether `option` acceptable value can be assigned via delimiting `option` and it via `-ac`|`--assignment-char` (required when `-ia`|`--is-assignable` equals to `true`)
+  - `-ac`|`--assignment-char` - assignment char used to specify `option` value  (required when `-ia`|`--is-assignable` and `-ab`|`--allow-bundle` equal to `true`)
 
 Example:
 
