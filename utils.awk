@@ -33,6 +33,15 @@ function printlnArray(target, separator) {
   print
 }
 
+# Cleares array.
+#
+# Arguments:
+# - taget - array
+function clearArray(target) {
+  for (key in target)
+    delete target[key]
+}
+
 # Checks whether value is a positive integer.
 #
 # Arguments:
