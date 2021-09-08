@@ -88,3 +88,13 @@ function isFloat(value) {
 function isBool(value) {
   return value ~ /^true|false$/
 }
+
+# Returns true value.
+function true() {
+  return 1
+}
+
+# Returns false value.
+function false() {
+  return 0
+}
