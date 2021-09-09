@@ -1,28 +1,7 @@
 @include "utils.awk"
+@include "errors.awk"
 
 @namespace "parseopts"
-
-BEGIN	{
-  __NO_OPTION_NAME_ERROR = "ERROR: option name expected before {. Wrong value is: "
-  __NO_OPENING_CURLY_BRACE_ERROR = "ERROR: { expected after option name. Wrong value is: "
-  __NO_CLOSING_CURLY_BRACE_ERROR = "ERROR: } expected after option description. Wrong value is: "
-  __UNKNOWN_OPTION_ERROR = "ERROR: -t|--type, -a|--alias, -ia|--is-assignable, -ab|--allow-bundle, -ac|--assignment-char expected. Wrong value is: "
-
-  __DUPLICATED_TYPE_ERROR = "ERROR: -t|--type duplicated. Wrong value is: "
-  __DUPLICATED_ALIAS_ERROR = "ERROR: -a|--alias duplicated. Wrong value is: "
-  __DUPLICATED_IS_ASSIGNABLE_ERROR = "ERROR: -ia|--is-assignable duplicated. Wrong value is: "
-  __DUPLICATED_ALLOW_BUNDLE_ERROR = "ERROR: -ab|--allow-bundle duplicated. Wrong value is: "
-  __DUPLICATED_ASSIGNMENT_CHAR_ERROR = "ERROR: -ac|--assignment-char duplicated. Wrong value is: "
-
-  __UNKNOWN_TYPE_VALUE_ERROR = "ERROR: integer|float|bool|string expected for -t|--type. Wrong value is: "
-  __NO_ALIAS_VALUE_ERROR = "ERROR: alias expected after assignment for -a|--alias. Wrong value is: "
-  __UNKNOWN_ASSIGNABLE_VALUE_ERROR = "ERROR: true|false expected for -ia|--is-assignable. Wrong value is: "
-  __UNKNOWN_ALLOW_BUNDLE_VALUE_ERROR = "ERROR: true|false expected for -ab|--allow-bundle. Wrong value is: "
-
-  __MISSING_TYPE_WHEN_IS_ASSIGNABLE_ERROR = "ERROR: expected -t|--type to be specified when -ia|--is-assignable equals to true."
-  __MISSING_ALLOW_BUNDLE_WHEN_IS_ASSIGNABLE_ERROR = "ERROR: expected -ab|--allow-bundle to be specified when -ia|--is-assignable equals to true."
-  __MISSING_ASSIGNMENT_CHAR_WHEN_ALLOW_BUNDLE_ERROR = "ERROR: expected -ac|--assignment-char to be specified when -ia|--is-assignable and -ab|--allow-bundle equal to true."
-}
 
 # Converts bool string to integer.
 #
@@ -38,12 +17,12 @@ function __toInteger(value) {
 # - opts - options array containing option specification (all indecies must be zero-based sequentially continue over entire array)
 # - i - index to start scanning opts from (must point to item with option name before opening curly brace)
 function __validateOpt(opts, i) {
-  if (length(opts[i]) == 0 || opts[i] == "{")
-    return __NO_OPTION_NAME_ERROR
+  if (!length(opts[i]) || opts[i] == "{")
+    return errors::NO_OPTION_NAME_ERROR
   
   i++
   if (opts[i] != "{")
-    return __NO_OPENING_CURLY_BRACE_ERROR
+    return errors::NO_OPENING_CURLY_BRACE_ERROR
   
   typeDefined = utils::false()
   aliasDefined = utils::false()
@@ -66,67 +45,67 @@ function __validateOpt(opts, i) {
 
     switch (option) {
       case /^(-t|--type)=/:
-        if (typeDefined == utils::true())
-          return __DUPLICATED_TYPE_ERROR option
+        if (typeDefined)
+          return errors::DUPLICATED_TYPE_ERROR option
 
         if (value !~ /^integer|float|bool|string$/)
-          return __UNKNOWN_TYPE_VALUE_ERROR option
+          return errors::UNKNOWN_TYPE_VALUE_ERROR option
 
         typeDefined = utils::true()
         break
       
       case /^(-a|--alias)=/:
-        if (aliasDefined == utils::true())
-          return __DUPLICATED_ALIAS_ERROR option
+        if (aliasDefined)
+          return errors::DUPLICATED_ALIAS_ERROR option
 
         if (value == "")
-          return __NO_ALIAS_VALUE_ERROR option
+          return errors::NO_ALIAS_VALUE_ERROR option
 
         aliasDefined = utils::true()
         break
       
       case /^(-ia|--is-assignable)=/:
-        if (isAssignableDefined == utils::true())
-          return __DUPLICATED_IS_ASSIGNABLE_ERROR option
+        if (isAssignableDefined)
+          return errors::DUPLICATED_IS_ASSIGNABLE_ERROR option
         
         if (value !~ /^true|false$/)
-          return __UNKNOWN_ASSIGNABLE_VALUE_ERROR option
+          return errors::UNKNOWN_ASSIGNABLE_VALUE_ERROR option
 
         isAssignableDefined = utils::true()
         isAssignableEqualTrue = __toInteger(value)
         break
       
       case /^(-ab|--allow-bundle)=/:
-        if (allowBundleDefined == utils::true())
-          return __DUPLICATED_ALLOW_BUNDLE_ERROR option
+        if (allowBundleDefined)
+          return errors::DUPLICATED_ALLOW_BUNDLE_ERROR option
         
         if (value !~ /^true|false$/)
-          return __UNKNOWN_ALLOW_BUNDLE_VALUE_ERROR option
+          return errors::UNKNOWN_ALLOW_BUNDLE_VALUE_ERROR option
         
         allowBundleDefined = utils::true()
         allowBundleEqualTrue = __toInteger(value)
         break
 
       case /^(--ac|--assignment-char)=/:
-        if (assignmentCharDefined == utils::true())
-          return __DUPLICATED_ASSIGNMENT_CHAR_ERROR option
+        if (assignmentCharDefined)
+          return errors::DUPLICATED_ASSIGNMENT_CHAR_ERROR option
         
         assignmentCharDefined = utils::true()
         break
       
       case "}=":
-        if (isAssignableEqualTrue == utils::true() && typeDefined == utils::false())
-          return __MISSING_TYPE_WHEN_IS_ASSIGNABLE_ERROR
-        if (isAssignableEqualTrue == utils::true() && allowBundleDefined == utils::false())
-          return __MISSING_ALLOW_BUNDLE_WHEN_IS_ASSIGNABLE_ERROR
-        if (isAssignableEqualTrue == utils::true() && allowBundleEqualTrue == utils::true() &&
-          assignmentCharDefined == utils::false())
-          return __MISSING_ASSIGNMENT_CHAR_WHEN_ALLOW_BUNDLE_ERROR
+        if (isAssignableEqualTrue && !typeDefined)
+          return errors::MISSING_TYPE_WHEN_IS_ASSIGNABLE_ERROR
+        if (isAssignableEqualTrue && !allowBundleDefined)
+          return errors::MISSING_ALLOW_BUNDLE_WHEN_IS_ASSIGNABLE_ERROR
+        if (isAssignableEqualTrue && allowBundleEqualTrue &&
+          !assignmentCharDefined)
+          return errors::MISSING_ASSIGNMENT_CHAR_WHEN_ALLOW_BUNDLE_ERROR
 
         return ++i
 
       default:
-        return __UNKNOWN_OPTION_ERROR option
+        return errors::UNKNOWN_OPTION_ERROR option
     }
 
     i++
@@ -134,7 +113,7 @@ function __validateOpt(opts, i) {
 
   len = length(opts)
   if (i = len && opts[len - 1] != "}")
-    return __NO_CLOSING_CURLY_BRACE_ERROR
+    return errors::NO_CLOSING_CURLY_BRACE_ERROR
 }
 
 # Validates option specifications.
@@ -142,9 +121,6 @@ function __validateOpt(opts, i) {
 # Arguments:
 # - opts - option array containing option specifications (all indecies must be zero-based sequentially continue over entire array)
 function __validateOpts(opts) {
-  if (!awk::isarray(opts))
-    return "ERROR: opts must be an array"
-
   i = 0
   while (i < length(opts)) {
     i = __validateOpt(opts, i)
@@ -159,16 +135,15 @@ function __validateOpts(opts) {
 # Arguments:
 # - opts options array containing option specification (all indecies must be zero-based sequentially continue over entire array)
 # - i - index to start scanning opts from (must point to item with option name before opening curly brace)
+# - outExists - array for marking option as defined
 # - outType - array with -t|--type values
 # - outAlias - array with -a|--alias values
 # - outIsAssignable - array with -ia|--is-assignable values
 # - outAllowBundle - array with -ab|--allow-bundle values
 # - outAssignmentChar - array with -ac|--assignment-char values
-function __parseOpt(opts, i, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar) {
-  if (!awk::isarray(opts))
-    return "ERROR: opts must be an array"
-  
+function __parseOpt(opts, i, outExists, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar) {
   optionName = opts[i++]
+  outExists[optionName] = utils::true()
   i++
 
   while (i < length(opts) && opts[i] != "}") {
@@ -190,11 +165,11 @@ function __parseOpt(opts, i, outType, outAlias, outIsAssignable, outAllowBundle,
         break
       
       case /^(-ia|--is-assignable)=/:
-        outIsAssignable[optionName] = value
+        outIsAssignable[optionName] = __toInteger(value)
         break
       
       case /^(-ab|--allow-bundle)=/:
-        outAllowBundle[optionName] = value
+        outAllowBundle[optionName] = __toInteger(value)
         break
 
       case /^(--ac|--assignment-char)=/:
@@ -212,16 +187,14 @@ function __parseOpt(opts, i, outType, outAlias, outIsAssignable, outAllowBundle,
 #
 # Arguments:
 # - opts options array containing option specifications (all indecies must be zero-based sequentially continue over entire array)
-# - i - index to start scanning opts from (must point to item with option name before opening curly brace)
+# - outExists - array for marking option as defined
 # - outType - array with -t|--type values
 # - outAlias - array with -a|--alias values
 # - outIsAssignable - array with -ia|--is-assignable values
 # - outAllowBundle - array with -ab|--allow-bundle values
 # - outAssignmentChar - array with -ac|--assignment-char values
-function __parseOpts(opts, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar) {
-  if (!awk::isarray(opts))
-    return "ERROR: opts must be an array"
-  
+function __parseOpts(opts, outExists, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar) {
+  utils::clearArray(outExists)
   utils::clearArray(outType)
   utils::clearArray(outAlias)
   utils::clearArray(outIsAssignable)
@@ -229,10 +202,6 @@ function __parseOpts(opts, outType, outAlias, outIsAssignable, outAllowBundle, o
   utils::clearArray(outAssignmentChar)
 
   i = 0
-  while (i < length(opts)) {
-    i = __parseOpt(opts, i, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar)
-
-    if (i ~ /^ERROR:/) # If error text returned instead of index than throw error.
-      return i
-  }
+  while (i < length(opts))
+    i = __parseOpt(opts, i, outExists, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar)
 }
