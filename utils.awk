@@ -20,7 +20,7 @@ function false() {
 function printArray(target, separator) {
   if (!awk::isarray(target))
     return errors::ARRAY_EXPECTED "target"
-  if (length(separator) == 0)
+  if (!length(separator))
     separator = ", "
   
   targetLength = length(target)
