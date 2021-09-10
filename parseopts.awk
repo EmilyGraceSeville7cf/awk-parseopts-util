@@ -180,7 +180,7 @@ function __parseOpt(opts, i, outExists, outType, outAlias, outIsAssignable, outA
     i++
   }
 
-  return i
+  return ++i
 }
 
 # Saves option specification as several associative arrays.
@@ -204,4 +204,36 @@ function __parseOpts(opts, outExists, outType, outAlias, outIsAssignable, outAll
   i = 0
   while (i < length(opts))
     i = __parseOpt(opts, i, outExists, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar)
+}
+
+
+# Checks whether argument conforms specified option specification.
+#
+# Arguments:
+# - arg - argument
+# - value - possible argument value
+# - outExists - array for marking option as defined
+# - outType - array with -t|--type values
+# - outAlias - array with -a|--alias values
+# - outIsAssignable - array with -ia|--is-assignable values
+# - outAllowBundle - array with -ab|--allow-bundle values
+# - outAssignmentChar - array with -ac|--assignment-char values
+function __checkArgumentConformsSpecification(arg, value, outExists, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar) {
+  optionExists = utils::false()
+  if (arg in outExists)
+    optionExists = utils::true()
+
+  for (option in outAlias) {
+    alias = outAlias[option]
+    split(alias, aliasList, ",")
+
+    if (utils::containsValue(aliasList, arg)) {
+      optionExists = utils::true()
+      break
+    }
+  }
+
+  if (optionExists && !outIsAssignable[option])
+    return utils::true()
+  return utils::false()
 }
