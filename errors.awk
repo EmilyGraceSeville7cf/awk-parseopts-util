@@ -25,4 +25,9 @@ BEGIN	{
   MISSING_TYPE_WHEN_IS_ASSIGNABLE_ERROR = "ERROR: expected -t|--type to be specified when -ia|--is-assignable equals to true."
   MISSING_ALLOW_BUNDLE_WHEN_IS_ASSIGNABLE_ERROR = "ERROR: expected -ab|--allow-bundle to be specified when -ia|--is-assignable equals to true."
   MISSING_ASSIGNMENT_CHAR_WHEN_ALLOW_BUNDLE_ERROR = "ERROR: expected -ac|--assignment-char to be specified when -ia|--is-assignable and -ab|--allow-bundle equal to true."
+
+  # Argument errors
+  USER_UNKNOWN_OPTION_ERROR = "ERROR: unknown option used. Wrong value is: "
+  USER_BUNDLED_ASSIGNMENT_NOT_SUPPORTED_ERROR = "ERROR: unexpected bundled assignment for option without assignment support. Wrong value is: "
+  USER_NO_VALUE_PROVIDED_ERROR = "ERROR: missing value for option mandating assignment. Wrong value is: "
 }
