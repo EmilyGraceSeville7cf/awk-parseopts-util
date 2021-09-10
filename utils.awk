@@ -72,6 +72,21 @@ function containsValue(target, value) {
   return false()
 }
 
+# Checkes whether array contains key matching specified regex.
+#
+# Arguments:
+# - taget - array
+# - regex - regex to match
+function containsMatchingKey(target, regex) {
+  if (!awk::isarray(target))
+    return errors::ARRAY_EXPECTED "target"
+  
+  for (key in target)
+    if (key ~ regex)
+      return true()
+  return false()
+}
+
 # Checks whether value is a positive integer.
 #
 # Arguments:
