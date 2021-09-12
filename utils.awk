@@ -87,28 +87,6 @@ function containsMatchingKey(target, regex) {
   return false()
 }
 
-# Checks whether value is a positive integer.
-#
-# Arguments:
-# - value - value to check
-function isPositiveInteger(value) {
-  if (awk::isarray(value))
-    return errors::PRIMITIVE_EXPECTED "value"
-  
-  return value ~ /^+?[[:digit:]]+$/
-}
-
-# Checks whether value is a negative integer.
-#
-# Arguments:
-# - value - value to check
-function isNegativeInteger(value) {
-  if (awk::isarray(value))
-    return errors::PRIMITIVE_EXPECTED "value"
-  
-  return value ~ /^-?[[:digit:]]+$/
-}
-
 # Checks whether value is an integer.
 #
 # Arguments:
@@ -118,28 +96,6 @@ function isInteger(value) {
     return errors::PRIMITIVE_EXPECTED "value"
   
   return value ~ /^[-+]?[[:digit:]]+$/
-}
-
-# Checks whether value is a positive float.
-#
-# Arguments:
-# - value - value to check
-function isPositiveFloat(value) {
-  if (awk::isarray(value))
-    return errors::PRIMITIVE_EXPECTED "value"
-  
-  return value ~ /^+?[[:digit:]]+\.[[:digit:]]*$/
-}
-
-# Checks whether value is a negative float.
-#
-# Arguments:
-# - value - value to check
-function isNegativeFloat(value) {
-  if (awk::isarray(value))
-    return errors::PRIMITIVE_EXPECTED "value"
-  
-  return value ~ /^-?[[:digit:]]+\.[[:digit:]]*$/
 }
 
 # Checks whether value is a float.
