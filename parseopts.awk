@@ -240,7 +240,9 @@ function __parseOpts(opts, outExists, outType, outAlias, outIsAssignable, outAll
 # - outIsAssignable - array with -ia|--is-assignable values
 # - outAllowBundle - array with -ab|--allow-bundle values
 # - outAssignmentChar - array with -ac|--assignment-char values
-function __checkArgumentConformsSpecification(args, i, possibleValue, outExists, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar) {
+function __checkArgumentConformsSpecification(args, i, possibleValue, outExists, outType, outAlias,
+  outIsAssignable, outAllowBundle, outAssignmentChar,    rawArg, arg, optionExists, bundledAssignmentUsed,
+  step, option, alias, aliasList, j, value) {
   rawArg = args[i]
   arg = args[i]
 
@@ -339,7 +341,8 @@ function __checkArgumentConformsSpecification(args, i, possibleValue, outExists,
 # - outIsAssignable - array with -ia|--is-assignable values
 # - outAllowBundle - array with -ab|--allow-bundle values
 # - outAssignmentChar - array with -ac|--assignment-char values
-function __checkArgumentsConformSpecifications(args, outExists, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar) {
+function __checkArgumentsConformSpecifications(args, outExists, outType, outAlias, outIsAssignable,
+  outAllowBundle, outAssignmentChar,    i) {
   i = 0
 
   while (i < length(args)) {
