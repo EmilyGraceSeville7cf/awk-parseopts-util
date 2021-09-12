@@ -161,7 +161,8 @@ function __validateOpts(opts,    duplicates, i) {
 # - outIsAssignable - array with -ia|--is-assignable values
 # - outAllowBundle - array with -ab|--allow-bundle values
 # - outAssignmentChar - array with -ac|--assignment-char values
-function __parseOpt(opts, i, outExists, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar) {
+function __parseOpt(opts, i, outExists, outType, outAlias, outIsAssignable, outAllowBundle,
+  outAssignmentChar,    optionName, option, value) {
   optionName = opts[i++]
   outExists[optionName] = utils::true()
   i++
@@ -213,7 +214,8 @@ function __parseOpt(opts, i, outExists, outType, outAlias, outIsAssignable, outA
 # - outIsAssignable - array with -ia|--is-assignable values
 # - outAllowBundle - array with -ab|--allow-bundle values
 # - outAssignmentChar - array with -ac|--assignment-char values
-function __parseOpts(opts, outExists, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar) {
+function __parseOpts(opts, outExists, outType, outAlias, outIsAssignable, outAllowBundle,
+  outAssignmentChar,    i) {
   utils::clearArray(outExists)
   utils::clearArray(outType)
   utils::clearArray(outAlias)
