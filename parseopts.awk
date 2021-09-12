@@ -338,15 +338,15 @@ function __checkArgumentsConformSpecifications(args, outExists, outType, outAlia
 # - args - array containing arguments (all indecies must be zero-based sequentially continue over entire array)
 # - opts - options array containing option specification (all indecies must be zero-based sequentially continue over entire array)
 function checkArguments(args, opts) {
-  result = parseopts::__validateOpts(options)
+  result = parseopts::__validateOpts(opts)
   if (result ~ /^ERROR:/)
     return result
 
-  result = parseopts::__parseOpts(options, outExists, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar)
+  result = parseopts::__parseOpts(opts, outExists, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar)
   if (result ~ /^ERROR:/)
     return result
   
-  result = parseopts::__checkArgumentsConformSpecifications(arguments, outExists, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar)
+  result = parseopts::__checkArgumentsConformSpecifications(args, outExists, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar)
   if (result ~ /^ERROR:/)
     return result
   return utils::true()
