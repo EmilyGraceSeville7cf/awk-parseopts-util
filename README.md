@@ -52,3 +52,41 @@ options[7] = "--alias=--version"
 options[8] = "--is-assignable=false"
 options[9] = "}"
 ```
+
+## Examples
+
+Checking whether user-written arguments (`arguments` array) conforms described option specification (`options` array):
+
+```awk
+@include "parseopts.awk"
+@include "utils.awk"
+@include "colors.awk"
+
+function shiftItems(from, to, source, target) {
+  i = from
+  j = to
+  while (i <= from + length(source) - 1) {
+    target[j] = source[i]
+    i++
+    j++
+  }
+}
+
+BEGIN {
+  split("-f { -a=--first -ia=true -t=bool -ab=true -ac=: } -s { -a=--second -ia=true -t=bool -ab=true -ac=: }", __options, " ")
+  shiftItems(1, 0, __options, options)
+  utils::clearArray(__options)
+
+  printf "options = "
+  utils::printlnArray(options)
+
+  split("--first false -s true", __arguments, " ")
+  shiftItems(1, 0, __arguments, arguments)
+  utils::clearArray(__arguments)
+
+  printf "arguments = "
+  utils::printlnArray(arguments, ", ")
+
+  print parseopts::checkArguments(arguments, options)
+}
+```

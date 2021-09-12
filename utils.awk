@@ -1,4 +1,16 @@
+@include "errors.awk"
+
 @namespace "utils"
+
+# Returns true value.
+function true() {
+  return 1
+}
+
+# Returns false value.
+function false() {
+  return 0
+}
 
 # Prints passed array via specified separator.
 #
@@ -7,8 +19,8 @@
 # - separator - separator [default value: ", "]
 function printArray(target, separator) {
   if (!awk::isarray(target))
-    return "ERROR: target must be an array"
-  if (length(separator) == 0)
+    return errors::ARRAY_EXPECTED "target"
+  if (!length(separator))
     separator = ", "
   
   targetLength = length(target)
@@ -38,24 +50,41 @@ function printlnArray(target, separator) {
 # Arguments:
 # - taget - array
 function clearArray(target) {
+  if (!awk::isarray(target))
+    return errors::ARRAY_EXPECTED "target"
+  
   for (key in target)
     delete target[key]
 }
 
-# Checks whether value is a positive integer.
+# Checkes whether array contains specified value.
 #
 # Arguments:
-# - value - value to check
-function isPositiveInteger(value) {
-  return value ~ /^+?[[:digit:]]+$/
+# - taget - array
+# - value - value to look for
+function containsValue(target, value) {
+  if (!awk::isarray(target))
+    return errors::ARRAY_EXPECTED "target"
+  
+  for (key in target)
+    if (target[key] == value)
+      return true()
+  return false()
 }
 
-# Checks whether value is a negative integer.
+# Checkes whether array contains key matching specified regex.
 #
 # Arguments:
-# - value - value to check
-function isNegativeInteger(value) {
-  return value ~ /^-?[[:digit:]]+$/
+# - taget - array
+# - regex - regex to match
+function containsMatchingKey(target, regex) {
+  if (!awk::isarray(target))
+    return errors::ARRAY_EXPECTED "target"
+  
+  for (key in target)
+    if (key ~ regex)
+      return true()
+  return false()
 }
 
 # Checks whether value is an integer.
@@ -63,23 +92,10 @@ function isNegativeInteger(value) {
 # Arguments:
 # - value - value to check
 function isInteger(value) {
+  if (awk::isarray(value))
+    return errors::PRIMITIVE_EXPECTED "value"
+  
   return value ~ /^[-+]?[[:digit:]]+$/
-}
-
-# Checks whether value is a positive float.
-#
-# Arguments:
-# - value - value to check
-function isPositiveFloat(value) {
-  return value ~ /^+?[[:digit:]]+\.[[:digit:]]*$/
-}
-
-# Checks whether value is a negative float.
-#
-# Arguments:
-# - value - value to check
-function isNegativeFloat(value) {
-  return value ~ /^-?[[:digit:]]+\.[[:digit:]]*$/
 }
 
 # Checks whether value is a float.
@@ -87,6 +103,9 @@ function isNegativeFloat(value) {
 # Arguments:
 # - value - value to check
 function isFloat(value) {
+  if (awk::isarray(value))
+    return errors::PRIMITIVE_EXPECTED "value"
+  
   return value ~ /^[-+]?[[:digit:]]+\.[[:digit:]]*$/
 }
 
@@ -95,15 +114,8 @@ function isFloat(value) {
 # Arguments:
 # - value - value to check
 function isBool(value) {
+  if (awk::isarray(value))
+    return errors::PRIMITIVE_EXPECTED "value"
+  
   return value ~ /^true|false$/
-}
-
-# Returns true value.
-function true() {
-  return 1
-}
-
-# Returns false value.
-function false() {
-  return 0
 }
