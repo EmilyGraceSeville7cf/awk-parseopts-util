@@ -86,7 +86,7 @@ function __validateOpt(opts, i) {
         allowBundleEqualTrue = __toInteger(value)
         break
 
-      case /^(--ac|--assignment-char)=/:
+      case /^(-ac|--assignment-char)=/:
         if (assignmentCharDefined)
           return errors::DUPLICATED_ASSIGNMENT_CHAR_ERROR option
         
@@ -172,7 +172,7 @@ function __parseOpt(opts, i, outExists, outType, outAlias, outIsAssignable, outA
         outAllowBundle[optionName] = __toInteger(value)
         break
 
-      case /^(--ac|--assignment-char)=/:
+      case /^(-ac|--assignment-char)=/:
         outAssignmentChar[optionName] = value
         break
     }
@@ -206,20 +206,29 @@ function __parseOpts(opts, outExists, outType, outAlias, outIsAssignable, outAll
     i = __parseOpt(opts, i, outExists, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar)
 }
 
-
 # Checks whether argument conforms specified option specification.
 #
 # Arguments:
-# - arg - argument
-# - value - possible argument value
+# - args - array containing arguments (all indecies must be zero-based sequentially continue over entire array)
+# - i - index to start scanning arguments from (must point to item with option name before opening curly brace)
+# - possibleValue - possible argument value (argument value can be bundled with it in arg)
 # - outExists - array for marking option as defined
 # - outType - array with -t|--type values
 # - outAlias - array with -a|--alias values
 # - outIsAssignable - array with -ia|--is-assignable values
 # - outAllowBundle - array with -ab|--allow-bundle values
 # - outAssignmentChar - array with -ac|--assignment-char values
-function __checkArgumentConformsSpecification(arg, value, outExists, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar) {
+function __checkArgumentConformsSpecification(args, i, possibleValue, outExists, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar) {
+  rawArg = args[i]
+  arg = args[i]
+
+  if (!length(arg))
+    return errors::USER_NO_OPTION_PROVIDED_ERROR "arg"
+
   optionExists = utils::false()
+  bundledAssignmentUsed = utils::false()
+
+  step = 2
   if (arg in outExists)
     optionExists = utils::true()
 
@@ -229,11 +238,99 @@ function __checkArgumentConformsSpecification(arg, value, outExists, outType, ou
 
     if (utils::containsValue(aliasList, arg)) {
       optionExists = utils::true()
+      arg = option
       break
     }
   }
 
-  if (optionExists && !outIsAssignable[option])
-    return utils::true()
-  return utils::false()
+  if (!optionExists) {
+    if (utils::containsMatchingKey(outExists, "^" arg)) {
+      optionExists = utils::true()
+      bundledAssignmentUsed = utils::true()
+    }
+
+    for (option in outAlias) {
+      alias = outAlias[option]
+      split(alias, aliasList, ",")
+      
+      for (key in aliasList) {
+        if (arg ~ "^" aliasList[key]) {
+          optionExists = utils::true()
+          bundledAssignmentUsed = utils::true()
+          arg = option
+          break
+        }
+      }
+    }
+    
+    step = 1
+  }
+
+  if (!optionExists)
+    return errors::USER_UNKNOWN_OPTION_ERROR arg
+
+  if (!outIsAssignable[arg] && bundledAssignmentUsed)
+    return errors::USER_OPTION_BUNDLED_ASSIGNMENT_NOT_SUPPORTED_ERROR arg
+  if (outIsAssignable[arg] && !bundledAssignmentUsed && !length(possibleValue))
+    return errors::USER_NO_OPTION_VALUE_PROVIDED_ERROR arg
+  
+  if (!outIsAssignable[arg])
+    step = 1
+
+  if (!bundledAssignmentUsed)
+    value = possibleValue
+  else {
+    #if (length(outAssignmentChar[arg])) {
+      j = index(rawArg, outAssignmentChar[arg])
+      value = substr(rawArg, j + 1)
+      if (!length(value))
+        return errors::USER_NO_OPTION_VALUE_PROVIDED_ERROR arg
+    #}
+  }
+
+  if (!length(value))
+    return errors::USER_NO_OPTION_VALUE_PROVIDED_ERROR arg
+
+  switch (outType[arg]) {
+    case "integer":
+      if (!utils::isInteger(value))
+        return errors::USER_INTEGER_OPTION_VALUE_EXPECTED value
+      break
+    case "float":
+      if (!utils::isFloat(value))
+        return errors::USER_FLOAT_OPTION_VALUE_EXPECTED value
+      break
+    case "bool":
+      if (!utils::isBool(value))
+        return errors::USER_BOOL_OPTION_VALUE_EXPECTED value
+      break
+  }
+
+  return i + step
+}
+
+# Checks whether arguments conform specified option specifications.
+#
+# Arguments:
+# - args - array containing arguments (all indecies must be zero-based sequentially continue over entire array)
+# - outExists - array for marking option as defined
+# - outType - array with -t|--type values
+# - outAlias - array with -a|--alias values
+# - outIsAssignable - array with -ia|--is-assignable values
+# - outAllowBundle - array with -ab|--allow-bundle values
+# - outAssignmentChar - array with -ac|--assignment-char values
+function __checkArgumentsConformSpecifications(args, outExists, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar) {
+  i = 0
+
+  while (i < length(args)) {
+    if (length(args[i + 1]))
+      i = __checkArgumentConformsSpecification(args, i, args[i + 1], outExists, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar)
+    else {
+      delete args[i + 1]
+      i = __checkArgumentConformsSpecification(args, i, "", outExists, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar)
+    }
+
+    if (i ~ /^ERROR:/) # If error text returned instead of index than throw error.
+      return i
+  }
 }
