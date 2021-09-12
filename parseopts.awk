@@ -25,7 +25,7 @@ function __validateOpt(opts, i, duplicates) {
   optionName = opts[i]
 
   if (optionName in duplicates)
-    return errors::DUPLICATED_OPTION_ERROR optionName
+    return errors::DUPLICATED_OPTION_OR_ALIAS_ERROR optionName
 
   i++
   if (opts[i] != "{")

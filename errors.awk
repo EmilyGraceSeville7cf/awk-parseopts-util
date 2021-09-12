@@ -9,8 +9,8 @@ BEGIN	{
   NO_OPTION_NAME_ERROR = "ERROR: option name expected before {. Wrong value is: "
   NO_OPENING_CURLY_BRACE_ERROR = "ERROR: { expected after option name. Wrong value is: "
   NO_CLOSING_CURLY_BRACE_ERROR = "ERROR: } expected after option description. Wrong value is: "
-  UNKNOWN_OPTION_ERROR = "ERROR: -t|--type, -a|--alias, -ia|--is-assignable, -ab|--allow-bundle, -ac|--assignment-char expected. Wrong value is: "
-  DUPLICATED_OPTION_ERROR = "ERROR: option duplicated. Wrong value is: "
+  UNKNOWN_OPTION_ERROR = "ERROR: -t|--type, -a|--alias, -ia|--is-assignable, -ab|--allow-bundle, -ac|--assignment-char expected inside curly braces. Wrong value is: "
+  DUPLICATED_OPTION_OR_ALIAS_ERROR = "ERROR: option or option alias duplicated. Wrong value is: "
 
   DUPLICATED_TYPE_ERROR = "ERROR: -t|--type duplicated. Wrong value is: "
   DUPLICATED_ALIAS_ERROR = "ERROR: -a|--alias duplicated. Wrong value is: "
