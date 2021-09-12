@@ -80,18 +80,6 @@ BEGIN {
   printf "options = "
   utils::printlnArray(options)
 
-  result = parseopts::__validateOpts(options)
-  if (result ~ /^ERROR:/) {
-    print result
-    exit
-  }
-
-  result = parseopts::__parseOpts(options, outExists, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar)
-  if (result ~ /^ERROR:/) {
-    print result
-    exit
-  }
-
   split("--first false -s true", __arguments, " ")
   shiftItems(1, 0, __arguments, arguments)
   utils::clearArray(__arguments)
@@ -99,10 +87,6 @@ BEGIN {
   printf "arguments = "
   utils::printlnArray(arguments, ", ")
 
-  result = parseopts::__checkArgumentsConformSpecifications(arguments, outExists, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar)
-  if (result ~ /^ERROR:/) {
-    print result
-    exit
-  }
+  print parseopts::checkArguments(arguments, options)
 }
 ```
