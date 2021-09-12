@@ -366,7 +366,7 @@ function __checkArgumentsConformSpecifications(args, outExists, outType, outAlia
 # Arguments:
 # - args - array containing arguments (all indecies must be zero-based sequentially continue over entire array)
 # - opts - options array containing option specification (all indecies must be zero-based sequentially continue over entire array)
-function checkArguments(args, opts) {
+function checkArguments(args, opts,    result) {
   result = parseopts::__validateOpts(opts)
   if (result ~ /^ERROR:/)
     return result
