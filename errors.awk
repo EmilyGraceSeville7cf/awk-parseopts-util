@@ -30,8 +30,9 @@ BEGIN	{
   USER_UNKNOWN_OPTION_ERROR = "ERROR: unknown option used. Wrong value is: "
   USER_OPTION_BUNDLED_ASSIGNMENT_NOT_SUPPORTED_ERROR = "ERROR: unexpected bundled assignment for option without assignment support. Wrong value is: "
   USER_NO_OPTION_VALUE_PROVIDED_ERROR = "ERROR: missing value for option mandating assignment. Wrong value is: "
+  USER_NO_OPTION_PROVIDED_ERROR = "ERROR: missing option. Wrong value is: "
 
-  USER_INTEGER_OPTION_VALUE_EXPECTED = "ERROR: integer option value expected. Wrong argument: "
-  USER_FLOAT_OPTION_VALUE_EXPECTED = "ERROR: float option value expected. Wrong argument: "
-  USER_BOOL_OPTION_VALUE_EXPECTED = "ERROR: bool option value expected. Wrong argument: "
+  USER_INTEGER_OPTION_VALUE_EXPECTED = "ERROR: integer option value expected. Possible reasons: multiple +/- signs used. Wrong argument: "
+  USER_FLOAT_OPTION_VALUE_EXPECTED = "ERROR: float option value expected. Possible reasons: multiple +/- signs used; comma used instead of dot; missing integer part. Wrong argument: "
+  USER_BOOL_OPTION_VALUE_EXPECTED = "ERROR: bool option value expected. Possible reasons: wrong char case used; 0/1 literal used as false/true. Wrong argument: "
 }
