@@ -16,7 +16,9 @@ function __toInteger(value) {
 # - opts - options array containing option specification (all indecies must be zero-based sequentially continue over entire array)
 # - i - index to start scanning opts from (must point to item with option name before opening curly brace)
 # - duplicates - defined options to exclude duplcates
-function __validateOpt(opts, i, duplicates) {
+function __validateOpt(opts, i, duplicates,    optionName, typeDefined, aliasDefined,
+  isAssignableDefined, allowBundleDefined, assignmentCharDefined, isAssignableEqualTrue,
+  allowBundleEqualTrue, option, value, aliasList, key) {
   optionName = opts[i]
 
   if (!length(optionName) || optionName == "{")
@@ -74,7 +76,7 @@ function __validateOpt(opts, i, duplicates) {
           utils::printlnArray(aliasList)
           if (aliasList[key] in duplicates)
             return errors::DUPLICATED_OPTION_OR_ALIAS_ERROR aliasList[key]
-          duplicates[outAlias[key]] = utils::true()
+          duplicates[aliasList[key]] = utils::true()
         }
 
         aliasDefined = utils::true()
@@ -136,7 +138,7 @@ function __validateOpt(opts, i, duplicates) {
 #
 # Arguments:
 # - opts - option array containing option specifications (all indecies must be zero-based sequentially continue over entire array)
-function __validateOpts(opts) {
+function __validateOpts(opts,    duplicates, i) {
   split("", duplicates)
 
   i = 0
