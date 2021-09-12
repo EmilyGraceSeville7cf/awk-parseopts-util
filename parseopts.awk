@@ -1,5 +1,4 @@
 @include "utils.awk"
-@include "errors.awk"
 
 @namespace "parseopts"
 
