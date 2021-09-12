@@ -15,10 +15,18 @@ function __toInteger(value) {
 # Arguments:
 # - opts - options array containing option specification (all indecies must be zero-based sequentially continue over entire array)
 # - i - index to start scanning opts from (must point to item with option name before opening curly brace)
-function __validateOpt(opts, i) {
-  if (!length(opts[i]) || opts[i] == "{")
+# - duplicates - defined options to exclude duplcates
+function __validateOpt(opts, i, duplicates) {
+  optionName = opts[i]
+
+  if (!length(optionName) || optionName == "{")
     return errors::NO_OPTION_NAME_ERROR
-  
+
+  if (optionName in duplicates)
+    return errors::DUPLICATED_OPTION_OR_ALIAS_ERROR optionName
+
+  duplicates[optionName] = utils::true()
+
   i++
   if (opts[i] != "{")
     return errors::NO_OPENING_CURLY_BRACE_ERROR
@@ -59,6 +67,15 @@ function __validateOpt(opts, i) {
 
         if (value == "")
           return errors::NO_ALIAS_VALUE_ERROR option
+
+        split(value, aliasList, ",")
+
+        for (key in aliasList) {
+          utils::printlnArray(aliasList)
+          if (aliasList[key] in duplicates)
+            return errors::DUPLICATED_OPTION_OR_ALIAS_ERROR aliasList[key]
+          duplicates[outAlias[key]] = utils::true()
+        }
 
         aliasDefined = utils::true()
         break
@@ -120,9 +137,11 @@ function __validateOpt(opts, i) {
 # Arguments:
 # - opts - option array containing option specifications (all indecies must be zero-based sequentially continue over entire array)
 function __validateOpts(opts) {
+  split("", duplicates)
+
   i = 0
   while (i < length(opts)) {
-    i = __validateOpt(opts, i)
+    i = __validateOpt(opts, i, duplicates)
 
     if (i ~ /^ERROR:/) # If error text returned instead of index than throw error.
       return i
