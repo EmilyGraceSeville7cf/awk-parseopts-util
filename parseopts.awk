@@ -21,11 +21,11 @@ function __validateOpt(opts, i, duplicates) {
 
   if (!length(optionName) || optionName == "{")
     return errors::NO_OPTION_NAME_ERROR
-  
-  optionName = opts[i]
 
   if (optionName in duplicates)
     return errors::DUPLICATED_OPTION_OR_ALIAS_ERROR optionName
+
+  duplicates[optionName] = utils::true()
 
   i++
   if (opts[i] != "{")
@@ -68,6 +68,15 @@ function __validateOpt(opts, i, duplicates) {
         if (value == "")
           return errors::NO_ALIAS_VALUE_ERROR option
 
+        split(value, aliasList, ",")
+
+        for (key in aliasList) {
+          utils::printlnArray(aliasList)
+          if (aliasList[key] in duplicates)
+            return errors::DUPLICATED_OPTION_OR_ALIAS_ERROR aliasList[key]
+          duplicates[outAlias[key]] = utils::true()
+        }
+
         aliasDefined = utils::true()
         break
       
@@ -109,7 +118,6 @@ function __validateOpt(opts, i, duplicates) {
           !assignmentCharDefined)
           return errors::MISSING_ASSIGNMENT_CHAR_WHEN_ALLOW_BUNDLE_ERROR
 
-        duplicates[optionName] = utils::true()
         return ++i
 
       default:
@@ -134,10 +142,6 @@ function __validateOpts(opts) {
   i = 0
   while (i < length(opts)) {
     i = __validateOpt(opts, i, duplicates)
-    
-    for (key in duplicates)
-      printf key " | "
-    print
 
     if (i ~ /^ERROR:/) # If error text returned instead of index than throw error.
       return i
