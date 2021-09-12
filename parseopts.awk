@@ -225,7 +225,8 @@ function __parseOpts(opts, outExists, outType, outAlias, outIsAssignable, outAll
 
   i = 0
   while (i < length(opts))
-    i = __parseOpt(opts, i, outExists, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar)
+    i = __parseOpt(opts, i, outExists, outType, outAlias, outIsAssignable, outAllowBundle,
+      outAssignmentChar)
 }
 
 # Checks whether argument conforms specified option specification.
@@ -240,9 +241,9 @@ function __parseOpts(opts, outExists, outType, outAlias, outIsAssignable, outAll
 # - outIsAssignable - array with -ia|--is-assignable values
 # - outAllowBundle - array with -ab|--allow-bundle values
 # - outAssignmentChar - array with -ac|--assignment-char values
-function __checkArgumentConformsSpecification(args, i, possibleValue, outExists, outType, outAlias,
-  outIsAssignable, outAllowBundle, outAssignmentChar,    rawArg, arg, optionExists, bundledAssignmentUsed,
-  step, option, alias, aliasList, j, value) {
+function __checkArgumentConformsSpecification(args, i, possibleValue, outExists, outType,
+  outAlias, outIsAssignable, outAllowBundle, outAssignmentChar,    rawArg, arg, optionExists,
+  bundledAssignmentUsed, step, option, alias, aliasList, j, value) {
   rawArg = args[i]
   arg = args[i]
 
@@ -341,16 +342,18 @@ function __checkArgumentConformsSpecification(args, i, possibleValue, outExists,
 # - outIsAssignable - array with -ia|--is-assignable values
 # - outAllowBundle - array with -ab|--allow-bundle values
 # - outAssignmentChar - array with -ac|--assignment-char values
-function __checkArgumentsConformSpecifications(args, outExists, outType, outAlias, outIsAssignable,
-  outAllowBundle, outAssignmentChar,    i) {
+function __checkArgumentsConformSpecifications(args, outExists, outType, outAlias,
+  outIsAssignable,  outAllowBundle, outAssignmentChar,    i) {
   i = 0
 
   while (i < length(args)) {
     if (length(args[i + 1]))
-      i = __checkArgumentConformsSpecification(args, i, args[i + 1], outExists, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar)
+      i = __checkArgumentConformsSpecification(args, i, args[i + 1], outExists, outType,
+        outAlias, outIsAssignable, outAllowBundle, outAssignmentChar)
     else {
       delete args[i + 1]
-      i = __checkArgumentConformsSpecification(args, i, "", outExists, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar)
+      i = __checkArgumentConformsSpecification(args, i, "", outExists, outType, outAlias,
+        outIsAssignable, outAllowBundle, outAssignmentChar)
     }
 
     if (i ~ /^ERROR:/) # If error text returned instead of index than throw error.
@@ -368,11 +371,13 @@ function checkArguments(args, opts) {
   if (result ~ /^ERROR:/)
     return result
 
-  result = parseopts::__parseOpts(opts, outExists, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar)
+  result = parseopts::__parseOpts(opts, outExists, outType, outAlias, outIsAssignable,
+    outAllowBundle, outAssignmentChar)
   if (result ~ /^ERROR:/)
     return result
   
-  result = parseopts::__checkArgumentsConformSpecifications(args, outExists, outType, outAlias, outIsAssignable, outAllowBundle, outAssignmentChar)
+  result = parseopts::__checkArgumentsConformSpecifications(args, outExists, outType,
+    outAlias, outIsAssignable, outAllowBundle, outAssignmentChar)
   if (result ~ /^ERROR:/)
     return result
   return utils::true()
