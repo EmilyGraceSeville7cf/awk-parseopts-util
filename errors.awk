@@ -10,8 +10,8 @@ BEGIN	{
   NO_OPENING_CURLY_BRACE_ERROR = "ERROR: { expected after option name. Wrong value is: "
   NO_CLOSING_CURLY_BRACE_ERROR = "ERROR: } expected after option description. Wrong value is: "
   UNKNOWN_OPTION_ERROR = "ERROR: -t|--type, -a|--alias, -ia|--is-assignable, -ab|--allow-bundle, -ac|--assignment-char expected. Wrong value is: "
-
   DUPLICATED_OPTION_ERROR = "ERROR: option duplicated. Wrong value is: "
+
   DUPLICATED_TYPE_ERROR = "ERROR: -t|--type duplicated. Wrong value is: "
   DUPLICATED_ALIAS_ERROR = "ERROR: -a|--alias duplicated. Wrong value is: "
   DUPLICATED_IS_ASSIGNABLE_ERROR = "ERROR: -ia|--is-assignable duplicated. Wrong value is: "
@@ -20,6 +20,7 @@ BEGIN	{
 
   UNKNOWN_TYPE_VALUE_ERROR = "ERROR: integer|float|bool|string expected for -t|--type. Wrong value is: "
   NO_ALIAS_VALUE_ERROR = "ERROR: alias expected after assignment for -a|--alias. Wrong value is: "
+  DUPLICATED_ALIAS_VALUE_ERROR = "ERROR: -a|--alias value duplicated. Wrong value is: "
   UNKNOWN_ASSIGNABLE_VALUE_ERROR = "ERROR: true|false expected for -ia|--is-assignable. Wrong value is: "
   UNKNOWN_ALLOW_BUNDLE_VALUE_ERROR = "ERROR: true|false expected for -ab|--allow-bundle. Wrong value is: "
 
