@@ -17,7 +17,7 @@ function false() {
 # Arguments:
 # - taget - array
 # - separator - separator [default value: ", "]
-function printArray(target, separator) {
+function printArray(target, separator,    targetLength, enumeratedCount, key) {
   if (!awk::isarray(target))
     return errors::ARRAY_EXPECTED "target"
   if (!length(separator))
@@ -49,7 +49,7 @@ function printlnArray(target, separator) {
 #
 # Arguments:
 # - taget - array
-function clearArray(target) {
+function clearArray(target,    key) {
   if (!awk::isarray(target))
     return errors::ARRAY_EXPECTED "target"
   
@@ -62,7 +62,7 @@ function clearArray(target) {
 # Arguments:
 # - taget - array
 # - value - value to look for
-function containsValue(target, value) {
+function containsValue(target, value,    key) {
   if (!awk::isarray(target))
     return errors::ARRAY_EXPECTED "target"
   
@@ -77,7 +77,7 @@ function containsValue(target, value) {
 # Arguments:
 # - taget - array
 # - regex - regex to match
-function containsMatchingKey(target, regex) {
+function containsMatchingKey(target, regex,    key) {
   if (!awk::isarray(target))
     return errors::ARRAY_EXPECTED "target"
   
