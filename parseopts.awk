@@ -279,12 +279,10 @@ function __checkArgumentConformsSpecification(args, i, possibleValue, outExists,
   if (!bundledAssignmentUsed)
     value = possibleValue
   else {
-    #if (length(outAssignmentChar[arg])) {
-      j = index(rawArg, outAssignmentChar[arg])
-      value = substr(rawArg, j + 1)
-      if (!length(value))
-        return errors::USER_NO_OPTION_VALUE_PROVIDED_ERROR arg
-    #}
+    j = index(rawArg, outAssignmentChar[arg])
+    value = substr(rawArg, j + 1)
+    if (!length(value))
+      return errors::USER_NO_OPTION_VALUE_PROVIDED_ERROR arg
   }
 
   if (!length(value))
