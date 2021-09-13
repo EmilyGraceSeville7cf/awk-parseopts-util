@@ -10,15 +10,17 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Set version
-        run: |
-          VERSION="$(git tag | sort --reverse | head -n 1)"
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+        run: >
+          echo "VERSION=$(git tag | sort --reverse | head -n 1)" >> "$GITHUB_ENV"
 
       - uses: "marvinpinto/action-automatic-releases@v1.2.1"
         with:
           title: "Release ${{ env.VERSION }}"
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_releases_tag: "${{ env.VERSION }}"
           prerelease: false
           files: "*.awk"
