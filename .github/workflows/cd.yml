@@ -1,0 +1,24 @@
+name: Continuous Deployment
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  publish-release:
+    name: Publish release
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set version
+        run: |
+          VERSION="$(git tag | sort --version | head -n 1)"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - uses: "marvinpinto/action-automatic-releases@v1.2.1"
+        with:
+          title: "Release ${{ env.VERSION }}"
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          files: "*.awk"
