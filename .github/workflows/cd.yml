@@ -13,7 +13,7 @@ jobs:
 
       - name: Set version
         run: |
-          VERSION="$(git tag | sort --version | head -n 1)"
+          VERSION="$(git tag | sort --reverse | head -n 1)"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - uses: "marvinpinto/action-automatic-releases@v1.2.1"
