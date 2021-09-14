@@ -17,8 +17,16 @@ jobs:
           fetch-depth: 0
 
       - name: Set version
-        run: >
-          echo "VERSION=$(git tag | sort --reverse | head -n 1)" >> "$GITHUB_ENV"
+        run: |
+          declare -ir NO_TAG_FOUND=1
+
+          VERSION="$(git tag | sort --reverse | head -n 1)"
+
+          if [[ -z $VERSION ]]; then
+            exit $NO_TAG_FOUND
+          fi
+
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
 
       - name: Zip all .awk files
         run: >
