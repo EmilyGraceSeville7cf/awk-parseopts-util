@@ -36,6 +36,6 @@ jobs:
         with:
           title: "Release ${{ env.VERSION }}"
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_releases_tag: "${{ env.VERSION }}"
+          automatic_release_tag: "${{ env.VERSION }}"
           prerelease: false
           files: "${{ env.ZIP }}"
