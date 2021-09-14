@@ -311,7 +311,7 @@ function __checkArgumentConformsSpecification(args, i, possibleValue, outExists,
       return errors::USER_NO_OPTION_VALUE_PROVIDED_ERROR arg
   }
 
-  if (!length(value))
+  if (outIsAssignable[arg] && !length(value))
     return errors::USER_NO_OPTION_VALUE_PROVIDED_ERROR arg
 
   switch (outType[arg]) {
@@ -381,4 +381,9 @@ function checkArguments(args, opts,    result) {
   if (result ~ /^ERROR:/)
     return result
   return utils::true()
+}
+
+BEGIN {
+  exit 0
+  checkArguments()
 }
