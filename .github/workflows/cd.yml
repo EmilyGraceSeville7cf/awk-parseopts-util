@@ -1,0 +1,41 @@
+name: Continuous Deployment
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  publish-release:
+    name: Publish release
+    runs-on: ubuntu-20.04
+
+    env:
+      ZIP: "archive.zip"
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Set version
+        run: |
+          declare -ir NO_TAG_FOUND=1
+
+          VERSION="$(git tag | sort --reverse | head -n 1)"
+
+          if [[ -z $VERSION ]]; then
+            exit $NO_TAG_FOUND
+          fi
+
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Zip all .awk files
+        run: >
+          zip -r $ZIP *.awk
+
+      - uses: "marvinpinto/action-automatic-releases@v1.2.1"
+        with:
+          title: "Release ${{ env.VERSION }}"
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_releases_tag: "${{ env.VERSION }}"
+          prerelease: false
+          files: "${{ env.ZIP }}"
