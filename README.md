@@ -53,6 +53,14 @@ options[8] = "--is-assignable=false"
 options[9] = "}"
 ```
 
+Or you can use parseoptsrunner.awk to pass arguments and their specifications simplier:
+
+```sh
+awk -f parseoptsrunner.awk -- -h :: -h '{' --alias=--help --is-assignable=false '}' -v '{' --alias=--version --is-assignable=false '}'
+```
+
+Everything before double colon is argument and everything after is specification.
+
 ## Examples
 
 Checking whether user-written arguments (`arguments` array) conforms described option specification (`options` array):
