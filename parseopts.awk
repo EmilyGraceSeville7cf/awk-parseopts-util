@@ -73,7 +73,6 @@ function __validateOpt(opts, i, duplicates,    optionName, typeDefined, aliasDef
         split(value, aliasList, ",")
 
         for (key in aliasList) {
-          utils::printlnArray(aliasList)
           if (aliasList[key] in duplicates)
             return errors::DUPLICATED_OPTION_OR_ALIAS_ERROR aliasList[key]
           duplicates[aliasList[key]] = utils::true()
@@ -381,9 +380,4 @@ function checkArguments(args, opts,    result) {
   if (result ~ /^ERROR:/)
     return result
   return utils::true()
-}
-
-BEGIN {
-  exit 0
-  checkArguments()
 }
