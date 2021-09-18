@@ -7,7 +7,7 @@ BEGIN	{
   CHECK_FAILED_CODE = 1
 
   i = 1
-  while (i < ARGC && ARGV[i] != "--") {
+  while (i < ARGC && ARGV[i] != "::") {
     arguments[i - 1] = ARGV[i]
     i++
   }
