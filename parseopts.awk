@@ -382,8 +382,3 @@ function checkArguments(args, opts,    result) {
     return result
   return utils::true()
 }
-
-BEGIN {
-  exit 0
-  checkArguments()
-}
