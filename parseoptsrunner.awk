@@ -2,14 +2,19 @@
 @include "colors.awk"
 
 function __printlnInputArguments(target,    DELIMITER_COLOR, OPTION_COLOR,
-  BRACE_COLOR, SEPARATOR, targetLength, i, color) {
+  BRACE_COLOR, SEPARATOR, targetLength, isDelimiterPassed, isInOptionSpecification,
+  i, color, option, value) {
   DELIMITER_COLOR = colors::FG_COLORS["purple"]
   OPTION_COLOR = colors::FG_COLORS["cyan"]
+  VALUE_COLOR = colors::FG_COLORS["yellow"]
   BRACE_COLOR = colors::FG_COLORS["blue"]
 
   SEPARATOR = " "
   
   targetLength = length(target)
+
+  isDelimiterPassed = utils::false()
+  isInOptionSpecification = utils::false()
 
   for (i = 1; i < targetLength; i++) {
     switch (target[i]) {
@@ -25,7 +30,29 @@ function __printlnInputArguments(target,    DELIMITER_COLOR, OPTION_COLOR,
         color = OPTION_COLOR
     }
 
-    printf "%s%s%s", color, target[i], COLORS["reset"]
+    if (isDelimiterPassed)
+      switch (target[i]) {
+        case /^{$/:
+          isInOptionSpecification = utils::true()
+          break
+        case /^}$/:
+          isInOptionSpecification = utils::false()
+          break
+      }
+    else if (target[i] == "::")
+      isDelimiterPassed = utils::true()
+
+    if (!isInOptionSpecification || target[i] == "{")
+      printf "%s%s%s", color, target[i], COLORS["reset"]
+    else {
+      option = target[i]
+      value = target[i]
+      
+      sub(/=.*/, "", option)
+      sub(/^.*=/, "", value)
+      printf "%s%s%s=%s%s%s", color, option, COLORS["reset"], VALUE_COLOR, value, COLORS["reset"]
+    }
+
     if (i < targetLength)
       printf SEPARATOR
   }
