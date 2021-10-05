@@ -1,8 +1,8 @@
-# ParseOpt
+# Command line option parser
 
 ## Description
 
-Library for parsing command line options.
+Tool to parse command-line options.
 
 ## Requirenments
 
