@@ -2,6 +2,8 @@
 
 ## Description
 
+> ⚠️ This project is no longer maintained.
+
 Tool to parse command-line options.
 
 ## Requirenments
